@@ -6,6 +6,16 @@ export class NewsItem extends Component {
         return (
             <div className="my-3">
                 <div className="card">
+                <div style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        position: 'absolute',
+                        right: '0'
+                    }
+                    }>
+
+                        <span className="badge rounded-pill bg-danger"> {source} </span>
+                    </div>
                 <span className="position-absolute top-0 translate-middle badge rounded-pill bg-danger" style={{zIndex:1,left:'90%'}}>
     {source}
     </span>

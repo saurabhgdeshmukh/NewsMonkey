@@ -1,5 +1,5 @@
 
-# Social Connect
+# NewsMonkey
 
 NewsAPI is a website that provides a simple and efficient way to access a wide range of news articles from various sources. It allows users to stay informed about current events by aggregating news content from different publishers in one place.
 

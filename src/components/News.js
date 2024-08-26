@@ -17,45 +17,53 @@ const News = (props)=>{
         return string.charAt(0).toUpperCase() + string.slice(1);
     } 
 
-    const updateNews = async ()=> {
-        props.setProgress(10);
-        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=9477a1c86e74453fa5f1ec9cb877d9a0&page=${page}&pageSize=${props.pageSize}`; 
-        setLoading(true)
-        let data = await fetch(url);
-        props.setProgress(30);
-        let parsedData = await data.json()
-        props.setProgress(70);
-        setArticles(parsedData.articles)
-        setTotalResults(parsedData.totalResults)
-        setLoading(false)
-        props.setProgress(100);
-    }
+    const updateNews = async () => {
+        try {
+            props.setProgress(10);
+            const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=9477a1c86e74453fa5f1ec9cb877d9a0&page=${page}&pageSize=${props.pageSize}`; 
+            setLoading(true);
+            let data = await fetch(url);
+            props.setProgress(30);
+            let parsedData = await data.json();
+            props.setProgress(70);
+            setArticles(parsedData.articles || []);
+            setTotalResults(parsedData.totalResults || 0);
+            setLoading(false);
+            props.setProgress(100);
+        } catch (error) {
+            console.error("Failed to fetch news articles:", error);
+            setLoading(false);
+        }
+    };
+    
 
     useEffect(() => {
         document.title = `${capitalizeFirstLetter(props.category)} - NewsMonkey`;
         updateNews(); 
-        // eslint-disable-next-line
     }, [])
 
 
     const fetchMoreData = async () => {   
+        console.log('Page:', page);
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=9477a1c86e74453fa5f1ec9cb877d9a0&page=${page+1}&pageSize=${props.pageSize}`;
-        setPage(page+1) 
+        setPage(page+1); 
         let data = await fetch(url);
-        let parsedData = await data.json()
-        setArticles(articles.concat(parsedData.articles))
-        setTotalResults(parsedData.totalResults)
-      };
+        let parsedData = await data.json();
+        console.log('Parsed Data:', parsedData);
+        setArticles(articles.concat(parsedData.articles));
+        setTotalResults(parsedData.totalResults);
+    };
+    
  
         return (
             <>
                 <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px' }}>NewsMonkey - Top {capitalizeFirstLetter(props.category)} Headlines</h1>
                 {loading && <Spinner />}
                 <InfiniteScroll
-                    dataLength={articles.length}
-                    next={fetchMoreData}
-                    hasMore={articles.length !== totalResults}
-                    loader={<Spinner/>}
+                     dataLength={articles?.length || 0}
+                     next={fetchMoreData}
+                     hasMore={articles?.length !== totalResults}
+                     loader={<Spinner />}
                 > 
                     <div className="container">
                          
